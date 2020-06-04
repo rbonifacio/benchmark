@@ -357,10 +357,11 @@ class DroidFax:
         with open(droidmate_trace_file, 'wb') as droidmate_trace:
             exec_cmd = Command('java',[
                 '-jar {}'.format(droidmate_jar),
-                '--ExecutionMode-explore=false',
-                '--ExecutionMode-inline=true',
-                '--Exploration-apksDir={}'.format(INPUT_DIR),
-                '--Output-outputDir={}'.format(DROIDMATE_DIR)
+                '--Core-logLevel=info',
+                '--Selectors-timeLimit=10',
+                '--Exploration-apkNames={0}'.format(file),
+                '--Exploration-apksDir={0}'.format(INPUT_DIR),
+                '--Output-outputDir={0}'.format(DROIDMATE_DIR),
             ],timeout=timeout)
             exec_cmd.invoke(stdout=droidmate_trace)
 
