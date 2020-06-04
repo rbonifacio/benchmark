@@ -123,6 +123,7 @@ class DroidFax:
     @classmethod
     def phase_two_execution(cls, timeout, tools):
         logging.info('Droidfax\'s Phase 2: Execution')
+        # TODO: make this hash pritave variable?
         test_generators = {"monkey":cls._exec_test_generator,"droidbot":cls._exec_test_generator_droidbot}
 
         # Verification of the timeout time ratio according to the number of apks in the input folder
