@@ -351,8 +351,19 @@ class DroidFax:
 
     @classmethod
     def _exec_test_generator_droidmate(cls, file, timeout):
-        droidmate_trace_file = os.path.join(TRACE_DIR, "log.droidmate")
+        droidmate_trace_file = os.path.join(TRACE_DIR, "droidmate", "{}.droidmate".format(file))
         droidmate_jar = os.path.join(TOOLS_DIR,'droidmate-2-X.X.X-all.jar')
+        droidmate_temp = os.path.join(WORKING_DIR, "droimate_temp")
+        outputDir = os.path.join(droidmate_temp,file)
+
+        try:
+            if not os.path.exists(droidmate_temp):
+                os.mkdir(droidmate_temp)
+            os.mkdir(outputDir)
+        except OSError:
+            error_msg = 'Error while creating folder {0}'.format(TRACE_DIR)
+            logging.error(error_msg)
+            raise Exception(error_msg)
 
         with open(droidmate_trace_file, 'wb') as droidmate_trace:
             exec_cmd = Command('java',[
@@ -361,7 +372,7 @@ class DroidFax:
                 '--Selectors-timeLimit=10',
                 '--Exploration-apkNames={0}'.format(file),
                 '--Exploration-apksDir={0}'.format(INPUT_DIR),
-                '--Output-outputDir={0}'.format(DROIDMATE_DIR),
+                '--Output-outputDir={0}'.format(droidmate_temp),
             ],timeout=timeout)
             exec_cmd.invoke(stdout=droidmate_trace)
 
