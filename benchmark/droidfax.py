@@ -352,7 +352,7 @@ class DroidFax:
     def _exec_test_generator_droidmate(cls, file, timeout):
         droidmate_trace_file = os.path.join(TRACE_DIR, "droidmate", "{}.droidmate".format(file))
         droidmate_jar = os.path.join(TOOLS_DIR,'droidmate-2-X.X.X-all.jar')
-        droidmate_temp = os.path.join(WORKING_DIR, "droimate_temp")
+        droidmate_temp = os.path.join(WORKING_DIR, "droidmate_temp")
         outputDir = os.path.join(droidmate_temp,file)
 
         try:
