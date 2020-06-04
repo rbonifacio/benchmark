@@ -110,6 +110,7 @@ class DroidFax:
     @classmethod
     def phase_two_execution(cls, timeout, tools):
         logging.info('Droidfax\'s Phase 2: Execution')
+        test_generators = {"monkey":cls._exec_test_generator,"droidbot":cls._exec_test_generator_droidbot}
 
         # Verification of the timeout time ratio according to the number of apks in the input folder
         apks_qnt = len(os.listdir(INSTRUMENTED_DIR))
@@ -135,32 +136,12 @@ class DroidFax:
         cls._start_emulator()
 
         for file in os.listdir(INSTRUMENTED_DIR):
-            logging.info('Installing {0}'.format(file))
-            cls._install_apk(os.path.join(INSTRUMENTED_DIR, file))
+            for tool in tools.split():
+                logging.info('Installing {0}'.format(file))
+                cls._install_apk(os.path.join(INSTRUMENTED_DIR, file))
 
-            if ("monkey" in tools):
                 logcat_cmd = Command('adb', ['logcat', '-v', 'raw', '-s', 'hcai-intent-monitor', 'hcai-cg-monitor'])
-                logcat_file = os.path.join(TRACE_DIR, "monkey", "{0}.logcat".format(file))
-
-                with open(logcat_file, 'wb') as log_cat:
-                    proc = logcat_cmd.invoke_as_deamon(stdout=log_cat)
-
-                    logging.info('Executing {0}'.format(file))
-                    start = time.time()
-
-                    logging.info("Testing with monkey {0} seconds".format(int(timeout_by_apk)))
-                    cls._exec_test_generator(file, timeout_by_apk)
-                    
-                    end = time.time()
-                    logging.debug("Execution took {0} seconds".format(int(end-start)))
-                    proc.kill()
-
-                # logging.info('Uninstalling {0}'.format(file))
-                # cls._uninstall_apk(os.path.join(INSTRUMENTED_DIR, file))
-
-            if ("droidbot" in tools):
-                logcat_cmd = Command('adb', ['logcat', '-v', 'raw', '-s', 'hcai-intent-monitor', 'hcai-cg-monitor'])
-                logcat_file = os.path.join(TRACE_DIR, "droidbot", "{0}.logcat".format(file))
+                logcat_file = os.path.join(TRACE_DIR, tool, "{0}.logcat".format(file))
 
                 with open(logcat_file, 'wb') as log_cat:
                     proc = logcat_cmd.invoke_as_deamon(stdout=log_cat)
@@ -168,15 +149,15 @@ class DroidFax:
                     logging.info('Executing {0}'.format(file))
                     start = time.time()
                     
-                    logging.info("Testing with droidbot {0} seconds".format(int(timeout_by_apk)))
-                    cls._exec_test_generator_droidbot(file, timeout_by_apk)
+                    logging.info("Testing with {1} {0} seconds".format(int(timeout_by_apk),tool))
+                    test_generators[tool](file, timeout_by_apk)
 
                     end = time.time()
                     logging.debug("Execution took {0} seconds".format(int(end-start)))
                     proc.kill()
 
-            logging.info('Uninstalling {0}'.format(file))
-            cls._uninstall_apk(os.path.join(INSTRUMENTED_DIR, file))
+                logging.info('Uninstalling {0}'.format(file))
+                cls._uninstall_apk(os.path.join(INSTRUMENTED_DIR, file))
 
         cls._kill_emulator()
 
