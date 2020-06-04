@@ -6,6 +6,7 @@ WORKING_DIR = os.getcwd()
 LIBS_DIR = os.path.join(WORKING_DIR, 'libs')
 INPUT_DIR = os.path.join(WORKING_DIR, 'data', 'input')
 INSTRUMENTED_DIR = os.path.join(WORKING_DIR, 'data', 'instrumented')
+TOOLS_DIR = os.path.join(WORKING_DIR, 'data', 'tools')
 TRACE_DIR = os.path.join(WORKING_DIR, 'trace')
 RESULTS_DIR = os.path.join(WORKING_DIR, 'results')
 

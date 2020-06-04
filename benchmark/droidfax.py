@@ -2,7 +2,20 @@ import logging
 import os
 import time
 
-from settings import INPUT_DIR, INSTRUMENTED_DIR, LIBS_DIR, ANDROID_JAR_PATH, KEYSTORE_PASSWORD, KEYSTORE_PATH, KEYALIAS, AVD_NAME, TRACE_DIR, EXECUTION_TIMEOUT, RESULTS_DIR, WORKING_DIR
+from settings import \
+    INPUT_DIR,\
+    INSTRUMENTED_DIR,\
+    LIBS_DIR,\
+    ANDROID_JAR_PATH,\
+    KEYSTORE_PASSWORD,\
+    KEYSTORE_PATH,\
+    KEYALIAS,\
+    AVD_NAME,\
+    TRACE_DIR,\
+    EXECUTION_TIMEOUT,\
+    RESULTS_DIR,\
+    WORKING_DIR,\
+    TOOLS_DIR
 from .commands.command import Command
 import signal
 import re
@@ -334,6 +347,21 @@ class DroidFax:
         package_name = cls._get_package_name(file)
         uninstall_cmd = Command('adb', ['-s', 'emulator-5554', 'uninstall', package_name])
         uninstall_cmd.invoke()
+
+    @classmethod
+    def _exec_test_generator_droidmate(cls, file, timeout):
+        droidmate_trace_file = os.path.join(TRACE_DIR, "log.droidmate")
+        droidmate_jar = os.path.join(TOOLS_DIR,'droidmate-2-X.X.X-all.jar')
+
+        with open(droidmate_trace_file, 'wb') as droidmate_trace:
+            exec_cmd = Command('java',[
+                '-jar {}'.format(droidmate_jar),
+                '--ExecutionMode-explore=false',
+                '--ExecutionMode-inline=true',
+                '--Exploration-apksDir={}'.format(INPUT_DIR),
+                '--Output-outputDir={}'.format(DROIDMATE_DIR)
+            ],timeout=timeout)
+            exec_cmd.invoke(stdout=droidmate_trace)
 
     # Start Droidbot:
     # droidbot -a <path_to_apk> -o output_dir
