@@ -133,15 +133,14 @@ class DroidFax:
 
         # Create a folder to store execution trace
         try:
-            if not os.path.exists(TRACE_DIR):
-                os.mkdir(TRACE_DIR)
-                for tool in tools.split():
-                    os.mkdir(os.path.join(TRACE_DIR, tool))
-            else:
-                # Delete previous traces
-                for tool in tools.split():
-                    for file in os.listdir(os.path.join(TRACE_DIR, tool)):
-                        os.remove(os.path.join(TRACE_DIR, tool, file))
+            # Delete previous traces
+            if os.path.exists(TRACE_DIR):
+                from shutil import rmtree
+                rmtree(TRACE_DIR)
+                del rmtree
+            os.mkdir(TRACE_DIR)
+            for tool in tools.split():
+                os.mkdir(os.path.join(TRACE_DIR, tool))
         except OSError:
             error_msg = 'Error while creating folder {0}'.format(TRACE_DIR)
             logging.error(error_msg)
